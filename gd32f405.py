@@ -27,11 +27,11 @@ zx_pins.close()
 af_summary = load_af_summary(gd32f405_af_fn)
 
 # Construct the pins config
-pins_config = pins_config_construct(af_summary, package_pins)
+pinctrl_config = pinctrl_config_construct(af_summary, package_pins)
 
 af_summary.close()
 
 # Format pinctrl config from pins config 
-pinctrl_pins_config = pinctrl_pins_config_format(pins_config)
+pinctrl_config_yaml = pinctrl_config_format(pinctrl_config)
 
-print(pinctrl_pins_config)
+print(pinctrl_config_yaml)
