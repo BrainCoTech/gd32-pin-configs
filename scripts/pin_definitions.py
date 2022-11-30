@@ -38,15 +38,16 @@ def parse_pin_definitions(filename):
     wb = load_workbook(filename)
     sheet = wb.active
     pin_function_definitions = {}
-    default = ''
-    alternate = ''
-    additional = ''
 
     '''
         The pin function definitions located in column 5. start at row 2.
         Example value: 'Default:PC14Alternate:EVENTOUTAdditional:OSC32IN'
     '''
     for i in range(2, sheet.max_row+1):
+        default = ''
+        alternate = ''
+        additional = ''
+
         function_definition = sheet.cell(row=i, column=5).value
         function_definition = function_definition[len("Default:"):]
 
@@ -78,6 +79,13 @@ def parse_pin_definitions(filename):
         else:
             ''' Not an I/O pin, ignored '''
             continue
+
+        # Append ADC,DAC to alternate.
+        for signal in additional.split(','):
+            if re.match('ADC[0-9]*_IN[0-9]+', signal):
+                alternate += ''.join([',', signal])
+            if re.match('DAC_OUT[0-9]*', signal):
+                alternate += ''.join([',', signal])
 
         pin_function_definitions[pin] = alternate
     

@@ -34,14 +34,17 @@ def  generate_pin_configs(gd32_pin_definitions, summary):
 
     # Generate signal_configs
     for pincode, pin_definitions in gd32_pin_definitions.items():
-        signals = set()
-        for _, functions in pin_definitions.items():
-            for f in functions.split(','):
-                if f not in signals:
-                    signals.add(f)
+        functions = set()
+        for pin, alternate in pin_definitions.items():
+            for func in alternate.split(','):
+                # Extract ADC and DAC from alternate
+                if "ADC" in func or "DAC" in func:
+                    pins[pin]["afs"][func] = "ANALOG"
+                if func not in functions:
+                    functions.add(func)
 
-        for signal, config in signal_configs.items():
-            if signal not in signals:
+        for func, config in signal_configs.items():
+            if func not in functions:
                 if "exclude-pincodes" in config:
                     config["exclude-pincodes"].append(pincode)
                 else:
